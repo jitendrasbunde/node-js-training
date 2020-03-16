@@ -1,7 +1,13 @@
 const mongoClient = require('mongodb').MongoClient;
 const config = require('./config.json');
-const mongoDbUrl = `mongodb://${config.mongodb.username}:${config.mongodb.password}@127.0.0.1:27017`;
+const username=process.env.mongo_username;
+const password=process.env.mongo_password;
+
+const mongoDbUrl = `mongodb://${username}:${password}@127.0.0.1:27017`;
 let mongodb;
+
+
+console.log(username+"  "+password);
 
 function connect(callback){
     mongoClient.connect(mongoDbUrl, (err, db) => {
@@ -22,3 +28,4 @@ module.exports = {
     get,
     close
 };
+
