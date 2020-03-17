@@ -56,7 +56,7 @@ router.delete('/delete/:name',function (req,res) {
   res.json({'url':'`json object sended`'});
 });
 
-router.get('/list',function (req,res) {
+router.get('/',function (req,res) {
   console.log(req.body);
 
   db.get().collection("user").find({}).toArray(function(err, result) {
