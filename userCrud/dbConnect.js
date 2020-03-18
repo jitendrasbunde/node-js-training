@@ -16,7 +16,8 @@ function connect(callback){
     });
 }
 function get(){
-    return mongodb;
+    let dbConn = mongodb;
+    return dbConn;
 }
 
 function close(){
