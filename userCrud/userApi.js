@@ -13,24 +13,19 @@ console.log(username+"  "+password);
 
 router.post('/add',function (req,res) {
   console.log(req.body);
-  if(!tempUser.emailExists(req.body.email)){
-    res.sendStatus(422);
-  }else{
-    let newUser = new User(req.body); 
-    if(newUser.validate()){
-      db.get().collection('user').insertOne(req.body, function(err, res) 
-      {    
-        if (err) 
-        { //if inserting data fails
-          console.log(err);
-        }
-        console.log("1 document inserted");
-
-      });
-      res.sendStatus(201);
+  tempUser.emailExists(req.body.email,(status)=>{
+    console.log(status);
+    if(status){
+      let newUser = new User(req.body); 
+      if(newUser.validate()){
+        tempUser.addUser(req.body);
+        res.sendStatus(201);
+      }else
+        res.sendStatus(406);
     }else
       res.sendStatus(406);
-  }  
+  });
+   
 });
 
 router.put('/update/:name',function (req,res) {
@@ -41,13 +36,8 @@ router.put('/update/:name',function (req,res) {
   console.log(updateInfo);
   if(tempUser.nameValidate(req.params.name)){
     tempUser.nameExists(req.params.name,()=>{
-      db.get().collection('user').updateMany(selectInfo,updateInfo, function(err, result) {
-        if (err){
-          console.log(err)
-        }
-        console.log("document updated");
-        res.sendStatus(202);
-      });
+      tempUser.updateUser(selectInfo,updateInfo);
+      res.sendStatus(202);
     })
   }else
     res.sendStatus(404);
@@ -57,13 +47,11 @@ router.delete('/delete/:name',function (req,res) {
   var myquery = {name :req.params.name}
   console.log(req.params.name);
   if(tempUser.nameValidate(req.params.name)){ 
-    db.get().collection('user').deleteOne(myquery, function(err, obj) {
-      if (err){
-        console.log(err);
-      }
-      console.log("1 document deleted");
-    });
-    res.sendStatus(200)
+    tempUser.nameExists(req.params.name,()=>{
+      tempUser.deleteUser(myquery);
+      res.sendStatus(200);
+    })
+    
   }else
     res.sendStatus(406)
 });

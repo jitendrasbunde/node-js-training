@@ -68,14 +68,21 @@ module.exports = class User{
       return false;
   }
 
-  emailExists(emailId){
+  emailExists(emailId,callback){
+    let status ;
+    console.log(emailId);
     db.get().collection("user").find({email:emailId}).toArray(function(err, result) {
       if (err){
         console.log(err);
-      }else if(result.lenght==0){
-        return true;
-      }else
-        return false;
+      }else if(result.length==0){
+        status = true;
+        console.log(result.length);
+      }else{
+        status = false;
+        console.log(result);
+        console.log(result.length);
+      }
+        callback(status);
     });
   }
 
@@ -84,23 +91,43 @@ module.exports = class User{
     db.get().collection("user").find({name:userName}).toArray(function(err, result) {
       if (err){
         console.log(err);
-      }else if(result.lenght==0){
+      }else if(result.length==0){
         status= false;
       }else
         status= true;
         callback();
     });
   }
+
+  updateUser(selectInfo,updateInfo){
+      db.get().collection('user').updateMany(selectInfo,updateInfo, function(err, result) {
+        if (err){
+          console.log(err)
+        }
+        console.log("document updated");
+    });
+  }
+
+  deleteUser(myquery){
+    db.get().collection('user').deleteOne(myquery, function(err, obj) {
+      if (err){
+        console.log(err);
+      }
+      console.log("1 document deleted");
+    });
+  }
+
+  addUser(data){
+    console.log(data);
+    db.get().collection('user').insertOne(data, function(err, res) 
+      {    
+        if (err) 
+        { //if inserting data fails
+          console.log(err);
+        }
+        console.log("1 document inserted");
+
+      });
+  }
 }
 
-/*
-var obj={
-  name:"Jitu",
-  email:"Jitu@gmail.com",
-  adhar:"121232324444",
-  pan:"ASDFG1234A",
-  mobile:"9518709596"
-}
-
-temp = new User(obj);
-temp.validate();*/
